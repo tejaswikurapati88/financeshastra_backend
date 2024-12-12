@@ -7,9 +7,9 @@ POST http://localhost:3000/api/register
 Content-Type: application/json
 
 {
-    "username": "kurapati",
-    "email": "kurapati@gmail.com",
-    "password": "kurapati"
+    "name": "parni",
+    "email": "parnika@gmail.com",
+    "password": "Parni@Teja123"
 }
 
 ### Signin User
@@ -17,6 +17,6 @@ POST http://localhost:3000/api/signin
 Content-Type: application/json 
 
 {
-    "email": "acsdfgehry@gmail.com",
-    "password": "kurapati"
+    "email": "parnika@gmail.com",
+    "password": "Parni@Teja123"
 }

@@ -55,17 +55,22 @@ app.get('/users', async (req, res)=>{
 // Insert user into table
 app.post('/api/register', async (req, res)=>{
     try{
-        const {username, email, password }= req.body
+        const {name, email, password }= req.body
         if (!dbConnection){
             return res.status(500).json({error: "Database connection is not established" });
         }
-        if (username === ""|| email=== ""|| password=== ""){
+        if (name === ""|| email=== ""|| password=== ""){
             return res.status(400).json({message: "All the details should be provided"})
         }else{
-            const hashedPass= await bcrypt.hash(password, 10)
-            const insertQuery = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
-            await dbConnection.query(insertQuery, [username, email, hashedPass]);
-            res.status(201).json({ message: 'User registered successfully' });
+            const [userExists]= await dbConnection.query(`select * from users where email= '${email}'`)
+            if (userExists.length===0){
+                const hashedPass= await bcrypt.hash(password, 10)
+                const insertQuery = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
+                await dbConnection.query(insertQuery, [name, email, hashedPass]);
+                res.status(200).json({ message: 'User registered successfully' });
+            }else{
+                res.status(400).json({message: 'User already Exists, Please Login!'})
+            }
         }
     }catch(error){
         res.status(500).json({ error: "Internal Server Error", details: error.message})
@@ -84,16 +89,16 @@ app.post('/api/signin', async (req, res)=>{
         }else if(password=== ''){
             return res.status(400).json({ message: "Please enter Password" })
         }else{
-            const isRegUser= `Select * from users where email = '${email}';`
-            const [user]= await dbConnection.query(isRegUser)
+            const isRegUser= `Select * from users where email = ?;`
+            const [user]= await dbConnection.query(isRegUser, [email])
             if (user.length === 0){
-                res.status(500).json({message: "Invalid User. Please SignUp!"})
+                res.status(404).json({message: "Invalid User. Please SignUp!"})
             }else{
                 const compare= await bcrypt.compare(password, user[0].password)
                 if (compare){
                     const payload = {
                         userId: user.id,
-                        username: user.name,
+                        name: user.name,
                         email: user.email,
                       };
                     const token= jwt.sign(payload, process.env.SECRET_KEY)
@@ -105,6 +110,16 @@ app.post('/api/signin', async (req, res)=>{
             }
         }
     }catch(error){
+        console.error("Error in /api/signin:", error);
         res.status(500).json({error: "Internal Server Error", details: error.message})
     }
 })
+
+// Delete rows in table
+/*app.delete('/api/delete', async (req, res)=>{
+    try{
+        const {id}= req.
+    }catch(e){
+        res.status(500).json({error: "Internal Server Error", details: e.message})
+    }
+})*/
