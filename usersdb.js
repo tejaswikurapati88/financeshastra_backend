@@ -15,3 +15,4 @@ myConnection.query(createUserTableQuery, (err, results) => {
     console.log('Table created successfully:', results);
 });    
 myConnection.end();
+

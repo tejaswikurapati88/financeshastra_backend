@@ -7,9 +7,12 @@ POST http://localhost:3000/api/register
 Content-Type: application/json
 
 {
-    "name": "parni",
-    "email": "parnika@gmail.com",
-    "password": "Parni@Teja123"
+    "first_name": "Parnika Bala",
+    "last_name": "Neeli",
+    "email": "parnikaneeli@gmail.com",
+    "password": "Parni@Teja123",
+    "Date_of_birth": "2001-04-21",
+    "enabled": 1
 }
 
 ### Signin User
@@ -17,6 +20,6 @@ POST http://localhost:3000/api/signin
 Content-Type: application/json 
 
 {
-    "email": "parnika@gmail.com",
+    "email": "parnikaneeli@gmail.com",
     "password": "Parni@Teja123"
 }

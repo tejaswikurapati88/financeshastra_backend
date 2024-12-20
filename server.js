@@ -55,18 +55,18 @@ app.get('/users', async (req, res)=>{
 // Insert user into table
 app.post('/api/register', async (req, res)=>{
     try{
-        const {name, email, password }= req.body
+        const {first_name, last_name, email, password, Date_of_birth, enabled}= req.body
         if (!dbConnection){
             return res.status(500).json({error: "Database connection is not established" });
         }
-        if (name === ""|| email=== ""|| password=== ""){
+        if (first_name === ""|| last_name==="" || email=== "" || Date_of_birth==="" || password=== ""){
             return res.status(400).json({message: "All the details should be provided"})
         }else{
             const [userExists]= await dbConnection.query(`select * from users where email= '${email}'`)
             if (userExists.length===0){
                 const hashedPass= await bcrypt.hash(password, 10)
-                const insertQuery = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
-                await dbConnection.query(insertQuery, [name, email, hashedPass]);
+                const insertQuery = 'INSERT INTO users (first_name, last_name, email, password, Date_of_birth, creation_date, last_access_date, enabled) VALUES (?, ?, ?, ?, ?, now(), now(), ?)';
+                await dbConnection.query(insertQuery, [first_name, last_name, email, hashedPass, Date_of_birth, enabled]);
                 res.status(200).json({ message: 'User registered successfully' });
             }else{
                 res.status(400).json({message: 'User already Exists, Please Login!'})
@@ -115,11 +115,5 @@ app.post('/api/signin', async (req, res)=>{
     }
 })
 
-// Delete rows in table
-/*app.delete('/api/delete', async (req, res)=>{
-    try{
-        const {id}= req.
-    }catch(e){
-        res.status(500).json({error: "Internal Server Error", details: e.message})
-    }
-})*/
+
+
