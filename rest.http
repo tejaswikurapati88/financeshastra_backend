@@ -23,3 +23,28 @@ Content-Type: application/json
     "email": "parnikaneeli@gmail.com",
     "password": "Parni@Teja123"
 }
+
+GET http://localhost:3000/api/userpayment
+###
+
+POST http://localhost:3000/api/user/payment
+Content-Type: application/json
+
+{
+    "fullName" : "Tejaswi",
+    "cardNumber": "12432546987521",
+    "expirationDate":"2027-12-12",
+    "securityCode": "12ewrfwef2",
+    "country":"India",
+    "state": "Telangana",
+    "city": "Mahabubabad",
+    "addressLine1": "2-2B Shivashankar cloth store",
+    "addressLine2": "Bus stand road",
+    "postalCode": 101505,
+    "billingCycle": "Annually",
+    "termsAccepted": false,
+    "planId": 1
+}
+###
+
+DELETE http://localhost:3000/api/deleteuserpatment/

@@ -117,3 +117,16 @@ app.post('/api/signin', async (req, res)=>{
 
 
 
+app.get('/api/plans', async (req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({ error: 'Database connection is not established' });
+        }
+        const selectQuery = 'SELECT * FROM subscription _plan';
+        const [plans] = await dbConnection.query(selectQuery); 
+        res.json(plans);
+    }catch(error){
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
