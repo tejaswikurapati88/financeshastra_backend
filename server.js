@@ -10,6 +10,17 @@ const app= express()
 app.use(express.json())
 app.use(cors())
 
+app.use(express.json());
+
+// Error-handling middleware for JSON parse errors
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        console.error('Bad JSON payload:', err.message);
+        return res.status(400).json({ error: 'Invalid JSON payload' });
+    }
+    next();
+});
+
 const dbCredentials={
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -55,18 +66,18 @@ app.get('/users', async (req, res)=>{
 // Insert user into table
 app.post('/api/register', async (req, res)=>{
     try{
-        const {first_name, last_name, email, password, Date_of_birth, enabled}= req.body
+        const { name, email, password}= req.body
         if (!dbConnection){
             return res.status(500).json({error: "Database connection is not established" });
         }
-        if (first_name === ""|| last_name==="" || email=== "" || Date_of_birth==="" || password=== ""){
+        if (name === ""|| email=== "" || password=== ""){
             return res.status(400).json({message: "All the details should be provided"})
         }else{
             const [userExists]= await dbConnection.query(`select * from users where email= '${email}'`)
             if (userExists.length===0){
                 const hashedPass= await bcrypt.hash(password, 10)
-                const insertQuery = 'INSERT INTO users (first_name, last_name, email, password, Date_of_birth, creation_date, last_access_date, enabled) VALUES (?, ?, ?, ?, ?, now(), now(), ?)';
-                await dbConnection.query(insertQuery, [first_name, last_name, email, hashedPass, Date_of_birth, enabled]);
+                const insertQuery = 'INSERT INTO users (name, email, password, creationDate) VALUES (?, ?, ?, now());';
+                await dbConnection.query(insertQuery, [name, email, hashedPass]);
                 res.status(200).json({ message: 'User registered successfully' });
             }else{
                 res.status(400).json({message: 'User already Exists, Please Login!'})
@@ -81,6 +92,7 @@ app.post('/api/register', async (req, res)=>{
 app.post('/api/signin', async (req, res)=>{
     try{
         const {email, password}= req.body 
+        console.log(req.body)
         if (!dbConnection){
             return res.status(500).json({error: "Database connection is not established" })
         }
@@ -101,7 +113,7 @@ app.post('/api/signin', async (req, res)=>{
                         name: user.name,
                         email: user.email,
                       };
-                    const token= jwt.sign(payload, process.env.SECRET_KEY)
+                    const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
                     res.status(200).json({jwtToken: token})
                 }else{
                     res.status(400).json({message: "InCorrect Password. Please try again!"})
@@ -122,11 +134,110 @@ app.get('/api/plans', async (req, res)=>{
         if (!dbConnection){
             return res.status(500).json({ error: 'Database connection is not established' });
         }
-        const selectQuery = 'SELECT * FROM subscription _plan';
+        const selectQuery = 'SELECT * FROM subscription_plan';
         const [plans] = await dbConnection.query(selectQuery); 
         res.json(plans);
     }catch(error){
         console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
+app.post('/api/user/payment', async (req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({error: 'Database connection is not established'})
+        }
+        const {fullName, cardNumber, expirationDate, securityCode, country, state, 
+            city, addressLine1, addressLine2, postalCode, billingCycle, termsAccepted, planId}= req.body
+        if (fullName === ""|| cardNumber==="" || expirationDate=== "" || securityCode==="" || country=== ""||
+            state === ""|| city==="" || addressLine1=== "" || addressLine2==="" || postalCode=== "" || billingCycle===''
+            || termsAccepted==="" || planId===""){
+                console.log('fill all details')
+            return res.status(400).json({message: "All the details should be provided"})
+        }else{
+            if (termsAccepted === false){
+                terms=0
+            }else{
+                terms=1
+            }
+            const insertQuery = 'INSERT INTO user_payment_details (full_name, card_number, expiry_date, security_code, country, state, city, address_line_1, address_line_2, postal_code, billing_cycle, terms_accepted, plan_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+            await dbConnection.query(insertQuery, [fullName, cardNumber, expirationDate, securityCode, 
+                country, state, city, addressLine1, addressLine2, postalCode, billingCycle, terms, planId])
+            res.status(200).json({ message: 'User payment details added successfully' });
+        }
+    }catch (error){
+                console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
+app.delete('/api/deleteuserpatment/', async (req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({error: 'Database connection is not established'})
+        }
+        const deleteSQL= `Delete from user_payment_details where idElite_payment_premium_form= 2`
+        await dbConnection.query(deleteSQL)
+        res.status(200).json({message: "user details deleted Successfully"})
+    }catch(e){
+        console.error('Error fetching users:', e);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
+app.get('/api/userpayment', async (req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({ error: 'Database connection is not established' });
+        }
+        const selectQuery = 'SELECT * FROM user_payment_details';
+        const [users] = await dbConnection.query(selectQuery); 
+        res.json(users);
+    }catch(error){
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
+app.get('/api/stocks', async (req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({error: 'Database connection is not established'})
+        }
+        const stocksQuery=`select * from stocks;`;
+        const [stocks] = await dbConnection.query(stocksQuery)
+        res.status(200).json(stocks);
+    }catch(e){
+        console.error('Error fetching users:', e);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
+app.get('/api/compstock', async (req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({error: 'Database connection is not established'})
+        }
+        const stockslistQuery=`select * from comapanies_stocks_list;`;
+        const [stockslist] = await dbConnection.query(stockslistQuery)
+        res.status(200).json(stockslist);
+    }catch(e){
+        console.error('Error fetching users:', e);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
+app.get('/api/nifty500', async (req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({error: 'Database connection is not established'})
+        }
+        const niftyQuery=`select * from Nifty500_Company_List;`;
+        const [nifty500] = await dbConnection.query(niftyQuery)
+        res.status(200).json(nifty500);
+    }catch(e){
+        console.error('Error fetching users:', e);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 })
