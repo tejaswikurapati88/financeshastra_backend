@@ -54,7 +54,7 @@ app.get('/users', async (req, res)=>{
         if (!dbConnection){
             return res.status(500).json({ error: 'Database connection is not established' });
         }
-        const selectQuery = 'SELECT * FROM users';
+        const selectQuery = 'SELECT * FROM userstable';
         const [users] = await dbConnection.query(selectQuery); 
         res.json(users);
     }catch(error){
@@ -67,19 +67,27 @@ app.get('/users', async (req, res)=>{
 app.post('/api/register', async (req, res)=>{
     try{
         const { name, email, password}= req.body
+        console.log(name, email, password)
         if (!dbConnection){
+            console.log('database is not connected')
             return res.status(500).json({error: "Database connection is not established" });
         }
         if (name === ""|| email=== "" || password=== ""){
+            console.log("name, email, password is not provided")
             return res.status(400).json({message: "All the details should be provided"})
         }else{
-            const [userExists]= await dbConnection.query(`select * from users where email= '${email}'`)
+            console.log("checking user")
+            const [userExists]= await dbConnection.query(`select * from userstable where email= '${email}'`)
+            console.log(userExists)
             if (userExists.length===0){
+                console.log("user not exists")
                 const hashedPass= await bcrypt.hash(password, 10)
-                const insertQuery = 'INSERT INTO users (name, email, password, creationDate) VALUES (?, ?, ?, now());';
+                console.log(hashedPass)
+                const insertQuery = 'INSERT INTO userstable (username, email, password, creation_date) VALUES (?, ?, ?, now());';
                 await dbConnection.query(insertQuery, [name, email, hashedPass]);
                 res.status(200).json({ message: 'User registered successfully' });
             }else{
+                console.log('user already exists')
                 res.status(400).json({message: 'User already Exists, Please Login!'})
             }
         }
@@ -101,7 +109,7 @@ app.post('/api/signin', async (req, res)=>{
         }else if(password=== ''){
             return res.status(400).json({ message: "Please enter Password" })
         }else{
-            const isRegUser= `Select * from users where email = ?;`
+            const isRegUser= `Select * from userstable where email = ?;`
             const [user]= await dbConnection.query(isRegUser, [email])
             if (user.length === 0){
                 res.status(404).json({message: "Invalid User. Please SignUp!"})
