@@ -51,7 +51,7 @@ DELETE http://localhost:3000/api/deleteuserpatment/
 GET http://localhost:3000/api/stocks
 
 ###Companys_socks_list
-GET http://localhost:3000/api/compstock
+#GET http://localhost:3000/api/compstock
 
 ###
 GET http://localhost:3000/api/nifty500

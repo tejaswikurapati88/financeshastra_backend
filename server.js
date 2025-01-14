@@ -214,7 +214,7 @@ app.get('/api/stocks', async (req, res)=>{
     }
 })
 
-app.get('/api/compstock', async (req, res)=>{
+/*app.get('/api/compstock', async (req, res)=>{
     try{
         if (!dbConnection){
             return res.status(500).json({error: 'Database connection is not established'})
@@ -226,7 +226,7 @@ app.get('/api/compstock', async (req, res)=>{
         console.error('Error fetching users:', e);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+})*/
 
 app.get('/api/nifty500', async (req, res)=>{
     try{
