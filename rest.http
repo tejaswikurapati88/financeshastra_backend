@@ -45,6 +45,44 @@ Content-Type: application/json
 }
 ###
 
+POST http://localhost:3000/api/user/paymentpaypal
+Content-Type: application/json
+
+{
+    "fullName": "Parnika Bala",
+    "phoneNumber": "9578523641",
+    "country": "India",
+    "state": "Telangan",
+    "city": "Mahabubabad",
+    "addressLine1": "kjdfbuwr sdofnwroi",
+    "addressLine2": "niowbhru9 wuogfbwruoe",
+    "postalCode": "589625",
+    "billingCycle": "Annually",
+    "termsAccepted": false,
+    "planId": 1
+}
+
+###
+
+POST http://localhost:3000/api/user/upi/payment
+Content-Type: application/json
+
+{
+    "fullName": "Parnika Bala",
+    "phoneNumber": "9900085658",
+    "country": "India",
+    "email": "parnika@gmail.com",
+    "state": "Telangana",
+    "pan":"1425FRH54",
+    "city": "Mahabubabad",
+    "addressLine1": "jbhvutrtxfchjb",
+    "addressLine2": "fegrhtejyr",
+    "postalCode": "521465",
+    "billingCycle": "Annually",
+    "termsAccepted": false,
+    "planId": 2
+}
+
 DELETE http://localhost:3000/api/deleteuserpatment/
 
 ###
@@ -55,3 +93,9 @@ GET http://localhost:3000/api/stocks
 
 ###
 GET http://localhost:3000/api/nifty500
+###
+
+DELETE http://localhost:3000/deleteplan/
+###
+
+DELETE  http://localhost:3000/deleteplancompanies

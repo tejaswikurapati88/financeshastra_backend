@@ -161,17 +161,13 @@ app.post('/api/user/payment', async (req, res)=>{
             city, addressLine1, addressLine2, postalCode, billingCycle, termsAccepted, planId}= req.body
         if (fullName === ""|| cardNumber==="" || expirationDate=== "" || securityCode==="" || country=== ""||
             state === ""|| city==="" || addressLine1=== "" || addressLine2==="" || postalCode=== "" || billingCycle===''
-            || termsAccepted==="" || planId===""){
+            || termsAccepted===undefined || planId===""){
                 console.log('fill all details')
                 console.log(fullName, cardNumber, expirationDate, securityCode, country, state, 
                     city, addressLine1, addressLine2, postalCode, billingCycle, termsAccepted, planId)
             return res.status(400).json({message: "All the details should be provided"})
         }else{
-            if (termsAccepted === false){
-                terms=0
-            }else{
-                terms=1
-            }
+            const terms = termsAccepted ? 1 : 0; 
             const insertQuery = 'INSERT INTO user_payment_details (full_name, card_number, expiry_date, security_code, country, state, city, address_line_1, address_line_2, postal_code, billing_cycle, terms_accepted, plan_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
             await dbConnection.query(insertQuery, [fullName, cardNumber, expirationDate, securityCode, 
                 country, state, city, addressLine1, addressLine2, postalCode, billingCycle, terms, planId])
@@ -219,28 +215,18 @@ app.post('/api/user/paymentpaypal', async (req, res)=>{
 
 
 
-app.post('/api/user/upi/payment', async (req, res)=>{
+/*app.post('/api/user/upi/payment', async (req, res)=>{
     try{
         console.log('started')
         if (!dbConnection){
             return res.status(500).json({error: 'Database connection is not established'})
         }
-        const {fullName,
-            phoneNumber,
-            country,
-            email,
-            state,
-            pan,
-            city,
-            addressLine1,
-            addressLine2,
-            postalCode,
-            billingCycle,
+        const {fullName, phoneNumber, country, email, state, pan, city, addressLine1, addressLine2,postalCode, billingCycle,
             termsAccepted,
             planId}= req.body
         if (fullName === ""|| phoneNumber===""|| country=== ""|| email===""|| pan===""||
             state === ""|| city==="" || addressLine1=== "" || addressLine2==="" || postalCode=== "" || billingCycle===''
-            || termsAccepted==="" || planId===""){
+            || termsAccepted=== undefined || planId===""){
                 console.log('fill all details')
                 console.log(fullName,
                     phoneNumber,
@@ -257,11 +243,7 @@ app.post('/api/user/upi/payment', async (req, res)=>{
                     planId)
             return res.status(400).json({message: "All the details should be provided"})
         }else{
-            if (termsAccepted === false){
-                terms=0
-            }else{
-                terms=1
-            }
+            const terms = termsAccepted ? 1 : 0; 
             const insertQuery = 
             'INSERT INTO user_payment_details_upi (full_name, phone_number, pan, email, country, state, city, address_line_1, address_line_2, postal_code, billing_cycle, terms_accepted, plan_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
             await dbConnection.query(insertQuery, [fullName,
@@ -284,10 +266,10 @@ app.post('/api/user/upi/payment', async (req, res)=>{
                 console.error('Error fetching users:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+})*/
 
 
-app.delete('/api/deleteuserpatment/', async (req, res)=>{
+/*app.delete('/api/deleteuserpatment/', async (req, res)=>{
     try{
         if (!dbConnection){
             return res.status(500).json({error: 'Database connection is not established'})
@@ -299,7 +281,7 @@ app.delete('/api/deleteuserpatment/', async (req, res)=>{
         console.error('Error fetching users:', e);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+})*/
 
 app.get('/api/userpayment', async (req, res)=>{
     try{
@@ -358,7 +340,7 @@ app.get('/api/nifty500', async (req, res)=>{
 })
 
 //Delete plan
-app.delete('/deleteplan', async (req, res)=>{
+/*app.delete('/deleteplan', async (req, res)=>{
     try{
         if (!dbConnection){
             return res.status(500).json({error: 'Database connection is not established'})
@@ -370,9 +352,9 @@ app.delete('/deleteplan', async (req, res)=>{
         console.error('Error fetching users:', e);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+})*/
 
-app.delete('/deleteplancompanies', async (req, res)=>{
+/*app.delete('/deleteplancompanies', async (req, res)=>{
     try{
         if (!dbConnection){
             return res.status(500).json({error: 'Database connection is not established'})
@@ -384,4 +366,4 @@ app.delete('/deleteplancompanies', async (req, res)=>{
         console.error('Error fetching users:', e);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+})*/
