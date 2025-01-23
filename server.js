@@ -157,19 +157,19 @@ app.post('/api/user/payment', async (req, res)=>{
         if (!dbConnection){
             return res.status(500).json({error: 'Database connection is not established'})
         }
-        const {fullName, cardNumber, expirationDate, securityCode, country, state, 
+        const {fullName, cardNumber, expirationDate, country, state, 
             city, addressLine1, addressLine2, postalCode, billingCycle, termsAccepted, planId}= req.body
-        if (fullName === ""|| cardNumber==="" || expirationDate=== "" || securityCode==="" || country=== ""||
+        if (fullName === ""|| cardNumber==="" || expirationDate=== "" || country=== ""||
             state === ""|| city==="" || addressLine1=== "" || addressLine2==="" || postalCode=== "" || billingCycle===''
             || termsAccepted===undefined || planId===""){
                 console.log('fill all details')
-                console.log(fullName, cardNumber, expirationDate, securityCode, country, state, 
+                console.log(fullName, cardNumber, expirationDate, country, state, 
                     city, addressLine1, addressLine2, postalCode, billingCycle, termsAccepted, planId)
             return res.status(400).json({message: "All the details should be provided"})
         }else{
             const terms = termsAccepted ? 1 : 0; 
-            const insertQuery = 'INSERT INTO user_payment_details (full_name, card_number, expiry_date, security_code, country, state, city, address_line_1, address_line_2, postal_code, billing_cycle, terms_accepted, plan_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
-            await dbConnection.query(insertQuery, [fullName, cardNumber, expirationDate, securityCode, 
+            const insertQuery = 'INSERT INTO user_payment_details (full_name, card_number, expiry_date, country, state, city, address_line_1, address_line_2, postal_code, billing_cycle, terms_accepted, plan_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+            await dbConnection.query(insertQuery, [fullName, cardNumber, expirationDate, 
                 country, state, city, addressLine1, addressLine2, postalCode, billingCycle, terms, planId])
                 console.log('payment success')
             res.status(200).json({ message: 'User payment details added successfully' });

@@ -32,7 +32,6 @@ Content-Type: application/json
     "fullName" : "Tejaswi",
     "cardNumber": "12432546987521",
     "expirationDate":"2027-12-12",
-    "securityCode": "12ewrfwef2",
     "country":"India",
     "state": "Telangana",
     "city": "Mahabubabad",
@@ -82,8 +81,8 @@ Content-Type: application/json
     "termsAccepted": false,
     "planId": 2
 }-->
-
-DELETE http://localhost:3000/api/deleteuserpatment/
+###
+#DELETE http://localhost:3000/api/deleteuserpatment/
 
 ###
 GET http://localhost:3000/api/stocks
