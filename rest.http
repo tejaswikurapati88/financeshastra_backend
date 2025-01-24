@@ -25,6 +25,20 @@ Content-Type: application/json
 GET http://localhost:3000/api/userpayment
 ###
 
+POST http://localhost:3000/api/paymentDetails1
+Content-Type: application/json
+
+{
+    "email": "parnikaneeli@gmail.com",
+    "planId": 1,
+    "billingCycle": "half year", 
+    "paymentMethod": "card", 
+    "cardNum": "1478523698745632", 
+    "cardExpiryDate": "2025-02-01"
+}
+
+###
+
 POST http://localhost:3000/api/user/payment
 Content-Type: application/json
 

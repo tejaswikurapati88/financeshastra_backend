@@ -151,6 +151,40 @@ app.get('/api/plans', async (req, res)=>{
     }
 })
 
+app.post("/api/paymentDetails1", async(req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({error: 'Database connection is not established'})
+        }
+        const { email, planId, billingCycle, initailDate, paymentMethod, cardNum, cardExpiryDate}
+        = req.body
+        if (email === ""|| planId==="" || billingCycle=== ""|| initailDate=== ""||
+            paymentMethod === ""|| cardNum==="" || cardExpiryDate=== "" ){
+                console.log('fill all details')
+                return res.status(400).json({message: "All the details should be provided"})
+        }else{
+        const initailDate= new Date();
+
+        const paymentDateTime= `${initailDate.getFullYear()}-${initailDate.getMonth()+1}-${initailDate.getDate()} ${initailDate.getHours()}:${initailDate.getMinutes()}`
+        
+        const initialDateInsert= `${initailDate.getFullYear()}-${initailDate.getMonth()+1}-${initailDate.getDate()}`
+        
+        var endDate = new Date(new Date(initailDate).setMonth(initailDate.getMonth() + 6));
+        
+        const userquery= `Select user_id from userstable where email = '${email}';`
+        const [user] = await dbConnection.query(userquery)
+        const userId= user[0].user_id 
+        const insertQuery = 'INSERT INTO users_payment_details (user_id, email, plan_id, billing_cycle, payment_date_time, initail_date, ending_date, payment_method, card_num, card_expiry_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+        await dbConnection.query(insertQuery, [userId, email, planId, 
+            billingCycle, initialDateInsert, paymentDateTime, endDate, paymentMethod, cardNum, cardExpiryDate])
+        res.status(200).json({ message: 'User payment details added successfully' });
+    }
+    }catch(e){
+        console.error('Error fetching users:', e);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
 app.post('/api/user/payment', async (req, res)=>{
     try{
         console.log('started')
