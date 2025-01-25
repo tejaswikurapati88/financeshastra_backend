@@ -156,10 +156,10 @@ app.post("/api/paymentDetails1", async(req, res)=>{
         if (!dbConnection){
             return res.status(500).json({error: 'Database connection is not established'})
         }
-        const { email, planId, billingCycle, initailDate, paymentMethod, cardNum, cardExpiryDate}
+        const { email, planId, billingCycle, initailDate, paymentMethod, cardNum, cardExpiryDate, upiId}
         = req.body
         if (email === ""|| planId==="" || billingCycle=== ""|| initailDate=== ""||
-            paymentMethod === ""|| cardNum==="" || cardExpiryDate=== "" ){
+            paymentMethod === ""){
                 console.log('fill all details')
                 return res.status(400).json({message: "All the details should be provided"})
         }else{
@@ -174,16 +174,24 @@ app.post("/api/paymentDetails1", async(req, res)=>{
         const userquery= `Select user_id from userstable where email = '${email}';`
         const [user] = await dbConnection.query(userquery)
         const userId= user[0].user_id 
-        const insertQuery = 'INSERT INTO users_payment_details (user_id, email, plan_id, billing_cycle, payment_date_time, initail_date, ending_date, payment_method, card_num, card_expiry_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+        if (paymentMethod==='card'){
+            const insertQuery = 'INSERT INTO users_payment_details (user_id, email, plan_id, billing_cycle, payment_date_time, initail_date, ending_date, payment_method, card_num, card_expiry_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
         await dbConnection.query(insertQuery, [userId, email, planId, 
             billingCycle, initialDateInsert, paymentDateTime, endDate, paymentMethod, cardNum, cardExpiryDate])
+        }else if (paymentMethod==='upi'){
+            const insertQuery = 'INSERT INTO users_payment_details (user_id, email, plan_id, billing_cycle, payment_date_time, initail_date, ending_date, payment_method, upi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
+        await dbConnection.query(insertQuery, [userId, email, planId, 
+            billingCycle, initialDateInsert, paymentDateTime, endDate, paymentMethod, upiId])
+        }
+        
         res.status(200).json({ message: 'User payment details added successfully' });
     }
     }catch(e){
         console.error('Error fetching users:', e);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+}
+)
 
 app.post('/api/user/payment', async (req, res)=>{
     try{

@@ -36,7 +36,17 @@ Content-Type: application/json
     "cardNum": "1478523698745632", 
     "cardExpiryDate": "2025-02-01"
 }
+###
+POST http://localhost:3000/api/paymentDetails1
+Content-Type: application/json
 
+{
+    "email": "parnikaneeli@gmail.com",
+    "planId": 1,
+    "billingCycle": "half year", 
+    "paymentMethod": "upi",
+    "upiId" : "14789526@frgr"
+}
 ###
 
 POST http://localhost:3000/api/user/payment
