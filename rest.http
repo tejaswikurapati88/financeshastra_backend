@@ -66,6 +66,11 @@ Content-Type: application/json
     "termsAccepted": false,
     "planId": 1
 }
+
+###Companys_socks_list
+GET http://localhost:3000/api/compstock/1
+
+
 ###
 
 <!--POST http://localhost:3000/api/user/paymentpaypal
@@ -112,7 +117,7 @@ Content-Type: application/json
 GET http://localhost:3000/api/stocks
 
 ###Companys_socks_list
-#GET http://localhost:3000/api/compstock
+GET http://localhost:3000/api/compstock
 
 ###
 GET http://localhost:3000/api/nifty500

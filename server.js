@@ -353,19 +353,35 @@ app.get('/api/stocks', async (req, res)=>{
     }
 })
 
-/*app.get('/api/compstock', async (req, res)=>{
+app.get('/api/compstock', async (req, res)=>{
     try{
         if (!dbConnection){
             return res.status(500).json({error: 'Database connection is not established'})
         }
-        const stockslistQuery=`select * from comapanies_stocks_list;`;
+        const stockslistQuery=`select * from comapanies_stocks_list limit 46;`;
         const [stockslist] = await dbConnection.query(stockslistQuery)
         res.status(200).json(stockslist);
     }catch(e){
         console.error('Error fetching users:', e);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-})*/
+})
+
+app.get('/api/compstock/:pagenum/', async (req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({error: 'Database connection is not established'})
+        }
+        const {pagenum}= req.params
+        const offset= (pagenum * 10) -10
+        const stockslistQuery=`select * from comapanies_stocks_list limit 10 offset ${offset};`;
+        const [stockslist] = await dbConnection.query(stockslistQuery)
+        res.status(200).json(stockslist);
+    }catch(e){
+        console.error('Error fetching users:', e);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
 
 app.get('/api/nifty500', async (req, res)=>{
     try{
