@@ -365,7 +365,22 @@ app.get('/api/compstock', async (req, res)=>{
         console.error('Error fetching users:', e);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+});
+
+app.get('/api/compstock', async (req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({error: 'Database connection is not established'})
+        }
+        const stockslistQuery=`select * from dummy_stocks_list limit 46;`;
+        const [stockslist] = await dbConnection.query(stockslistQuery)
+        res.status(200).json(stockslist);
+    }catch(e){
+        console.error('Error fetching users:', e);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 app.get('/api/compstock/:pagenum/', async (req, res)=>{
     try{
