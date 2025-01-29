@@ -83,7 +83,7 @@ app.post('/api/register', async (req, res)=>{
                 console.log("user not exists")
                 const hashedPass= await bcrypt.hash(password, 10)
                 console.log(hashedPass)
-                const insertQuery = 'INSERT INTO userstable (username, email, password, creation_date) VALUES (?, ?, ?, now());';
+                const insertQuery = 'INSERT INTO userstable (name, email, password, creation_date) VALUES (?, ?, ?, now());';
                 await dbConnection.query(insertQuery, [name, email, hashedPass]);
                 res.status(200).json({ message: 'User registered successfully' });
             }else{
@@ -367,7 +367,7 @@ app.get('/api/compstock', async (req, res)=>{
     }
 });
 
-app.get('/api/compstock', async (req, res)=>{
+app.get('/api/dummycompstock', async (req, res)=>{
     try{
         if (!dbConnection){
             return res.status(500).json({error: 'Database connection is not established'})
