@@ -71,6 +71,20 @@ Content-Type: application/json
 GET http://localhost:3000/api/compstock/1
 
 
+###Nifty100 from company_stocklist
+GET http://localhost:3000/api/nifty100
+
+
+###
+GET http://localhost:3000/api/stocks
+
+###Companys_socks_list
+GET http://localhost:3000/api/compstock
+
+###
+GET http://localhost:3000/api/nifty500
+
+
 ###
 
 <!--POST http://localhost:3000/api/user/paymentpaypal
@@ -113,14 +127,7 @@ Content-Type: application/json
 ###
 #DELETE http://localhost:3000/api/deleteuserpatment/
 
-###
-GET http://localhost:3000/api/stocks
 
-###Companys_socks_list
-GET http://localhost:3000/api/compstock
-
-###
-GET http://localhost:3000/api/nifty500
 ###
 
 <!--DELETE http://localhost:3000/deleteplan/

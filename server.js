@@ -1,4 +1,8 @@
 const express= require('express')
+
+const multer = require('multer');
+const path = require('path');
+
 const mysql = require('mysql2/promise');
 const cors= require('cors')
 const bcrypt= require('bcrypt')
@@ -367,6 +371,20 @@ app.get('/api/compstock', async (req, res)=>{
     }
 });
 
+app.get('/api/nifty100', async (req, res)=>{
+    try{
+        if (!dbConnection){
+            return res.status(500).json({error: 'Database connection is not established'})
+        }
+        const stockslistQuery=`select * from comapanies_stocks_list where NIFTY_100 != '-' limit 41;`;
+        const [stockslist] = await dbConnection.query(stockslistQuery)
+        res.status(200).json(stockslist);
+    }catch(e){
+        console.error('Error fetching users:', e);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
 app.get('/api/dummycompstock', async (req, res)=>{
     try{
         if (!dbConnection){
@@ -440,3 +458,4 @@ app.get('/api/nifty500', async (req, res)=>{
         res.status(500).json({ error: 'Internal Server Error' });
     }
 })*/
+
